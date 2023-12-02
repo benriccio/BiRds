@@ -43,8 +43,8 @@ sta.d <- bind_rows( #bind the rows
   mutate(usmap_transform(.,input_names = c("longitude","latitude"),output_names = c("longitude.1", "latitude.1")))%>% 
   mutate(name=str_sub(name, -5,-4))%>%
   mutate(migr.day=c(10,5,0))%>% 
-  separate(id,into = c("station.type","id"))%>%
-        print()
+  separate(id,into = c("station.type","id"))
+
 
 weather.d <- meteo_pull_monitors(sta.d$id,date_min = "2000-01-01")
 
