@@ -3,6 +3,7 @@ title: "Module 8"
 author: "Ben Riccio"
 date: "2023-12-01"
 output: html_document
+bibliography: Module8.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -17,11 +18,14 @@ library(usmap)
 library(car)
 library(knitr)
 library(kableExtra)
+library(sf)
 ```
 ## Introduction 
-This research focuses on the impact of climate change on the migration patterns of trans-Gulf migrants (TGMs), neotropical passerines traveling from Central and South America to breed in temperate North America each spring. The study addresses the critical trade-offs faced by these birds in choosing their arrival time, balancing the advantages of early mating opportunities with later arrival for increased food availability in seasonal ecosystems. Failure to adjust arrival dates in response to warmer temperatures may lead to population declines. Traditional methods, such as field studies, have limitations in temporal scope and in scale due to the few experts who are trained in this work. This project aims to leverage eBird, a popular citizen science platform, and meteorological data to analyze TGM arrival times in Massachusetts and investigate in the effect of of local weather condition on the TGM arrival times, which could potentially contributes to the broader understanding of avian biology in the context of climate change.
+This research focuses on the impact of climate change on the migration patterns of trans-Gulf migrants (TGMs), neotropical passerines traveling from Central and South America to breed in temperate North America each spring. The study addresses the critical trade-offs faced by these birds in choosing their arrival time, balancing the advantages of early mating opportunities with later arrival for increased food availability in seasonal ecosystems. Failure to adjust arrival dates in response to warmer temperatures may lead to population declines. 
 
-This project will focus specifically on these three questions:
+Previous studies has suggested that te highest intensity of seasonal migration activity of TGMs occurred between late April and early May and average peak intensity occurred latest in the season at the westernmost places(@abbott2023inbound). To verify the previous findings on the TGMs migrated to MA, this project aims to leverage eBird, a popular citizen science platform, and meteorological data to analyze TGM arrival times in Massachusetts and investigate in the effect of of local weather condition on the TGM arrival times, which could potentially contributes to the broader understanding of avian biology in the context of climate change.
+
+To be more specific, this project will focus specifically on these three questions:
 
 1. Does arrival time vary according to temperature and wind variables along migration route for TGMs migrating to MA?
 
@@ -30,6 +34,9 @@ This project will focus specifically on these three questions:
 3. How does your analysis contribute to, challenge, or refine previous hypothesis concerning the role that climatic variables play in long-distance migration in passerine birds?
 
 ## Methods 
+
+### Data Analysis
+
 
 ```{r, bird data,message=FALSE,echo=FALSE,warning=FALSE}
 species <- c("Setophaga ruticilla","Seiurus aurocapilla","Dolichonyx oryzivorus",
