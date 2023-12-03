@@ -22,7 +22,7 @@ library(kableExtra)
 
 ## Methods 
 
-```{r, bird data, cache=TRUE,message=FALSE,echo=FALSE,warning=FALSE}
+```{r, bird data,message=FALSE,echo=FALSE,warning=FALSE}
 species <- c("Setophaga ruticilla","Seiurus aurocapilla","Dolichonyx oryzivorus",
              "Icterus galbula","Hirundo rustica")
 
@@ -51,54 +51,29 @@ weather.d <- meteo_pull_monitors(sta.d$id,date_min = "2000-01-01")
 ```
 
 ```{r, bird data analysis,echo=FALSE,message=FALSE,warning=FALSE}
-#loop for creating arrival times 
-real_day <- list()
+sp<- dat%>%
+  group_by(year)%>%
+  mutate(date=as.Date(paste0(year,"-",month,"-",day)),
+         j.day=julian(date,origin=as.Date(paste0(unique(year),"-01-01")))
+  )%>%
+  group_by(species,year,j.day,date)%>%
+  summarise(day.tot=sum(individualCount,na.rm=T))%>%
+  group_by(species,year)%>%
+  mutate(prop=cumsum(day.tot/sum(day.tot,na.rm = T)))%>%
+  filter(year>1999)
 
-for (i in 1:5) {
-  sp <- species[i]
-  c <- dat %>%
-    filter(species == sp) %>%
-    group_by(year) %>%
-    mutate(
-      date = as.Date(paste0(year, "-", month, "-", day)),
-      j.day = julian(date, origin = as.Date(paste0(unique(year), "-01-01")))
-    ) %>%
-    group_by(species, year, j.day, date) %>%
-    summarise(day.tot = sum(individualCount, na.rm = TRUE)) %>%
-    group_by(species, year) %>%
-    mutate(prop = cumsum(day.tot / sum(day.tot, na.rm = TRUE))) %>%
-    filter(year > 1999)
-  
-  assign(paste0("bird_", i), c)
-  real_day[[i]] <- c
-}
-#look for creating predictions 
-pred_day <- list()
-
-for(i in 1:5){
-  d <- real_day[[i]] 
-  pred_data <- d %>%
-    group_by(year) %>%
-    summarize(pred=predict(nls(prop~SSlogis(j.day,Asym, xmid, scal)), newdata=data.frame(j.day=min(j.day):max(j.day))),
+sp.pred <- sp%>%
+  group_by(year)%>%
+ summarize(
+   pred=predict(nls(prop~SSlogis(j.day,Asym, xmid, scal)),newdata=data.frame(j.day=min(j.day):max(j.day))),
    j.day=min(j.day):max(j.day),
-   )%>%
-  left_join(real_day[[i]]%>%dplyr::select(j.day,date))
+  )%>%
+  left_join(sp%>%dplyr::select(j.day,date))
 
-  assign(paste0("pred_", i), pred_data)
-  pred_day[[i]] <- pred_data
-  }
-
-#getting 25% arrival data
-arrival_days <- list()
-for(i in 1:5){
-  day <- pred_day[[i]]
-  arrival <- day %>%
-    group_by(year)%>%
-    filter(j.day==j.day[which.min(abs(pred-0.25))])
-  assign(paste0("arrival_day_",i), arrival)
-arrival_days[[i]] <- arrival
-  
-}
+sp.arrive.date <-sp.pred%>%
+  group_by(year)%>%
+  filter(j.day==j.day[which.min(abs(pred-0.25))])
+sp.arrive.date
 
 ```
 
@@ -126,56 +101,35 @@ weather.wk <-weather.d %>%
          )%>%
   dplyr::select(j.day,date2,name,wk.tmin,wk.tmax,wk.wvec)
 
+sp.arr.weath.d <- sp.arrive.date %>%
+  left_join(weather.d)%>%
+  left_join(sp%>%dplyr::select(year,date,j.day))
 
-bird_arr_weath <- list()
-for(i in 1:5){
-  arrival_data <- arrival_days[[i]]
-  
-  joined_data <- arrival_data %>%
-    left_join(weather.d)
-  
-  with_weather <- left_join(joined_data, real_day[[i]] %>% dplyr::select(year, date, j.day))
-  
-  assign(paste0("arr_wealth", i), with_weather)
-  bird_arr_weath[[i]] <- with_weather
-}
+sp.arr.weath.wk <- sp.arrive.date %>%
+  left_join(weather.wk)%>%
+  left_join(sp%>%dplyr::select(year,date,j.day))
 
-bird_arr_weath2 <- list()
-for(i in 1:5){
-  arrival_data <- arrival_days[[i]]
-  
-  joined_data <- arrival_data %>%
-    left_join(weather.wk)
-  
-  with_weather <- left_join(joined_data, real_day[[i]] %>% dplyr::select(year, date, j.day))
-  
-  assign(paste0("arr_weath_", i), with_weather)
-
-  bird_arr_weath2[[i]] <- with_weather
-}
-
-final_bird_d <- bind_rows(bird_arr_weath)
-final_bird_wk <- bind_rows(bird_arr_weath2)
 
 ```
+
+
 ## Results 
 
 ```{r, modeling, message=FALSE ,echo=FALSE,warning=FALSE}
 
-
-bird_model_d <- lmer(j.day~tmin*tmax*wvec+(1|name),final_bird_d,na.action = "na.fail")
-bird_model_wk <- lmer(j.day~wk.tmin*wk.tmax*wk.wvec+(1|name),final_bird_wk,na.action = "na.fail")
+bird_model_d <- lmer(j.day~tmin*tmax*wvec+(1|name),sp.arr.weath.d,na.action = "na.fail")
+bird_model_wk <- lmer(j.day~wk.tmin*wk.tmax*wk.wvec+(1|name),sp.arr.weath.wk,na.action = "na.fail")
 
 arr_d_aic <- dredge(bird_model_d,fixed = c("tmin","tmax","wvec"),)
 kb_d <- kable(arr_d_aic[1:4,],caption = "Fit values for nested models of the most complicated lme model for daily weather")
 kable_styling(kb_d)
-best_model_d <- lmer(j.day~tmin+tmax+wvec+(1|name),final_bird_d,na.action = "na.fail")
+best_model_d <- lmer(j.day~tmin+tmax+wvec+(1|name),sp.arr.weath.d,na.action = "na.fail")
 Anova(best_model_d)
 
 arr_wk_aic <- dredge(bird_model_wk,fixed = c("wk.tmin","wk.tmax","wk.wvec"),)
 kb_wk <- kable(arr_wk_aic[1:4,],caption = "Fit values for nested models of the most complicated lme model for two-week weather")
 kable_styling(kb_wk)
-best_model_wk <- lmer(j.day~wk.tmin+wk.tmax+wk.wvec+(1|name),final_bird_wk,na.action = "na.fail")
+best_model_wk <- lmer(j.day~wk.tmin+wk.tmax+wk.wvec+(1|name),sp.arr.weath.wk,na.action = "na.fail")
 Anova(best_model_wk)
 
 ```
