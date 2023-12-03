@@ -19,6 +19,15 @@ library(knitr)
 library(kableExtra)
 ```
 ## Introduction 
+This research focuses on the impact of climate change on the migration patterns of trans-Gulf migrants (TGMs), neotropical passerines traveling from Central and South America to breed in temperate North America each spring. The study addresses the critical trade-offs faced by these birds in choosing their arrival time, balancing the advantages of early mating opportunities with later arrival for increased food availability in seasonal ecosystems. Failure to adjust arrival dates in response to warmer temperatures may lead to population declines. Traditional methods, such as field studies, have limitations in temporal scope and in scale due to the few experts who are trained in this work. This project aims to leverage eBird, a popular citizen science platform, and meteorological data to analyze TGM arrival times in Massachusetts and investigate in the effect of of local weather condition on the TGM arrival times, which could potentially contributes to the broader understanding of avian biology in the context of climate change.
+
+This project will focus specifically on these three questions:
+
+1. Does arrival time vary according to temperature and wind variables along migration route for TGMs migrating to MA?
+
+2. If arrival time does vary with meteorological conditions, what role will climate change potentially play in the population status of TGMs arriving in MA during the spring?
+
+3. How does your analysis contribute to, challenge, or refine previous hypothesis concerning the role that climatic variables play in long-distance migration in passerine birds?
 
 ## Methods 
 
