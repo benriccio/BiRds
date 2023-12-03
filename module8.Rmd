@@ -35,7 +35,14 @@ To be more specific, this project will focus specifically on these three questio
 
 ## Methods 
 
+### Data acquiring
+We first download eBird’s species occurrence data from the Global Biodiversity Information Facility (GBIF) and select 5 TGMs to analysis. Then we use rnoa to interact the data from NOAA’s National Climatic Data Center’s API to compile weather.
+
 ### Data Analysis
+We first find the date when 25% of each of the TGM population have arrived in a given year as the arrival time for each species. Then we modeled this process as a logistics curve.
+
+Aftert that we first identified the Julian day each year that corresponds to 25% of the population's arrival, and then analyzed how this arrival day varied across different years. In the preparation of our weather data, we adjusted the wind direction to a 180-degree scale and choose the columns of weather, which we want to work with. By combining two tables, each containing eBird and weather data, we could apply  linear mixed-effect modeling to assess the impact of weather parameters on arrival time. We first apply to  Anova() function to determine the significance of the fixed effects utilized in the model, and then we use the Dredge() function helped identify the optimal nested model that best fits our data.
+
 
 
 ```{r, bird data,message=FALSE,echo=FALSE,warning=FALSE}
