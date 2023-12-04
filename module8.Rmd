@@ -166,6 +166,7 @@ The @deppe2015fat paper found that going the other direction, winter arrival tim
 ## Author Contributions 
 Ben Riccio: Code, Results, Discussion. <br>
 Huang Weihang: Intro, Methods.  
-Binghao Deng: Final code review.
+Binghao Deng: Final code review. <br>
+Yunshu Qiu: Re-organized the final html and code review
 
 ## References
