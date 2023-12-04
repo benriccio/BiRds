@@ -157,5 +157,14 @@ Anova(best_model_wk)
 
 ```
 ## Discussion 
+Our results indicated that for both daily weather and two-week weather averages the best fitting model accounted for the effects of minimum temperature, maximum temperature, and wind vectors. The anova test results indicated that for the daily weather average, only min temperature may be significant. The two week average anova test showed wind vector and min temperature were significant.This indicates that weather does indeed have some effect on TMG sping arrival time to MA.
+
+Climate change could therefore impact when birds arrive each spring. As weather conditions change due to climate change, this result predicts that birds will change their arrival time.
+
+The @deppe2015fat paper found that going the other direction, winter arrival time in Mexico, did in fact depend on weather conditions, particularly humidity and wind conditions. While this paper examined TGM migration south, our data supports their findings. 
+
+## Author Contributions 
+Ben Riccio: Code, Results, Discussion. <br>
+Huang Weihang: Intro, Methods.  
 
 ## References
